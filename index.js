@@ -21,9 +21,24 @@ async function run(){
        
         await client.connect()
             const fruitCollection=client.db('fruits-wirehouse').collection('fruits')
-            console.log('mongo connected')
+            
+        //get api to read all inventory 
+        app.get('/inventories',async(req,res)=>{
+         const  cursor= fruitCollection.find({})
+           const inventory= await cursor.toArray()
+           res.send(result) 
+        }) 
         
         
+        //create inventory
+
+        app.post('/inventory',async(req,res)=>{
+            const data =req.body
+            const result=await fruitCollection.insertOne()
+            res.send(result)
+
+        })
+
         
      }
  
