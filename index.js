@@ -24,9 +24,10 @@ async function run(){
             
         //get api to read all inventory 
         app.get('/inventories',async(req,res)=>{
-         const  cursor= fruitCollection.find({})
+            const query=req.query
+         const  cursor= fruitCollection.find(query)
            const inventory= await cursor.toArray()
-           res.send(result) 
+           res.send(inventory) 
         }) 
         
         
@@ -50,6 +51,7 @@ async function run(){
 
             const updateDoc={
                 $set:{
+                    
                     userName:data.userName,
                     textData: data.textData
                 }
@@ -58,6 +60,17 @@ async function run(){
             const result=await fruitCollection.updateOne(filter,options,updateDoc)
             res.send(result)
         })
+
+        //delete item
+
+      app.delete('/inventory/:id',async(req,res)=>{
+        const id=req.params.id 
+        const filter ={_id:ObjectId(id)}
+        const result=await fruitCollection.deleteOne(filter)
+        req.send(result)
+
+
+      })  
 
         
      }
