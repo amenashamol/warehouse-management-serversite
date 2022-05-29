@@ -3,7 +3,7 @@ const cors=require('cors')
 const { MongoClient, ServerApiVersion,  ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express()
-const port=4000
+const port=5000
 
 
 
@@ -22,13 +22,21 @@ async function run(){
         await client.connect()
             const fruitCollection=client.db('fruits-wirehouse').collection('fruits')
             
+        //get api to read limit inventory 
+        app.get('/inventory',async(req,res)=>{
+            const query={}
+            const  cursor= fruitCollection.find(query).limit(6)
+            const inventories= await cursor.toArray()
+           res.send(inventories) 
+        })
+        
         //get api to read all inventory 
-        app.get('/inventories',async(req,res)=>{
-            const query=req.query
-         const  cursor= fruitCollection.find(query)
-           const inventory= await cursor.toArray()
-           res.send(inventory) 
-        }) 
+        app.get('/allinventory',async(req,res)=>{
+            const query={}
+            const  cursor= fruitCollection.find(query)
+            const inventories= await cursor.toArray()
+           res.send(inventories) 
+        })
         
         
         //create inventory item
@@ -43,6 +51,13 @@ async function run(){
 
         //udate inventory
 
+        app.get('/inventory/:id',async(req,res)=>{
+            const id=req.params.id 
+            const query={_id:ObjectId(id)}
+            const result=await fruitCollection.findOne(query)
+           res.send(result) 
+        })
+
         app.put('/inventory/:id', async(req,res)=>{
             const id=req.params.id 
             const data=req.body
@@ -50,24 +65,21 @@ async function run(){
             const options={upsert:true}
 
             const updateDoc={
-                $set:{
-                    
-                    userName:data.userName,
-                    textData: data.textData
-                }
+                $set:data,
             }
 
-            const result=await fruitCollection.updateOne(filter,options,updateDoc)
+            const result=await fruitCollection.updateOne(filter,updateDoc,options)
             res.send(result)
         })
 
         //delete item
 
-      app.delete('/inventory/:id',async(req,res)=>{
+      app.delete('/allinventory/:id',async(req,res)=>{
         const id=req.params.id 
         const filter ={_id:ObjectId(id)}
         const result=await fruitCollection.deleteOne(filter)
-        req.send(result)
+        res.send(result)
+        
 
 
       })  
