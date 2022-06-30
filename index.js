@@ -97,7 +97,7 @@ run().catch(console.dir)
 
 
 app.get('/', function (req, res) {
-    res.send(' Hello fruits -wire')
+    res.send('  fruits -wire')
   })
   
 
