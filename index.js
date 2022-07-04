@@ -1,6 +1,7 @@
 const express = require('express')
 const cors=require('cors')
 const { MongoClient, ServerApiVersion,  ObjectId } = require('mongodb');
+const jwt=require('jsonwebtoken')
 require('dotenv').config()
 const app = express()
 const port=process.env.PORT || 5000
@@ -15,12 +16,42 @@ app.use(express.json())
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dn5yr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
+function verifyJWT(req, res, next) {
+  
+    const authHeader = req.headers['authorization'];
+    const token =  authHeader && authHeader.split(' ')[1];
+   
+    if (!token) {
+      return res.status(401).json({ message: 'UnAuthorized access' });
+   }
+   
+    
+    jwt.verify(token, process.env.ACCESS_TOKEN, (err, decodeduser)=> {
+      if (err) {
+        return res.status(403).send({ message: 'Forbidden access' })
+      }
+      
+      req.decodeduser = decodeduser;
+      
+      
+      next()
+     })
+    }  
 async function run(){
     try{
        
         await client.connect()
             const fruitCollection=client.db('fruits-wirehouse').collection('fruits')
+
+
+            app.post('/login',async(req,res)=>{
+               
+                const user=req.body
+               
+                const token = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '1d' })
+                
+               res.send({token}) 
+            })     
             
         //get api to read limit inventory 
         app.get('/inventory',async(req,res)=>{
