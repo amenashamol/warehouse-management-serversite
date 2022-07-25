@@ -40,7 +40,7 @@ function verifyJWT(req, res, next) {
 async function run(){
     try{
        
-        await client.connect()
+             await client.connect()
             const fruitCollection=client.db('fruits-wirehouse').collection('fruits')
 
 
@@ -113,8 +113,18 @@ async function run(){
         
 
 
-      })  
+      }) 
+      
+      
+      // get my item
+     
 
+    app.get('/myItem',async(req,res)=>{
+      const email=req.query.email 
+      const query={email:email}
+      const result=await fruitCollection.find(query).toArray()
+     res.send(result) 
+  })
         
      }
  
