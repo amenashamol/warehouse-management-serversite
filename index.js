@@ -89,19 +89,19 @@ async function run(){
            res.send(result) 
         })
 
-        // app.put('/inventory/:id', async(req,res)=>{
-        //     const id=req.params.id 
-        //     const data=req.body
-        //     const filter ={_id:ObjectId(id)}
-        //     const options={upsert:true}
+        app.put('/inventory/:id', async(req,res)=>{
+            const id=req.params.id 
+            const data=req.body
+            const filter ={_id:ObjectId(id)}
+            const options={upsert:true}
 
-        //     const updateDoc={
-        //         $set:data,
-        //     }
+            const updateDoc={
+                $set:data,
+            }
 
-        //     const result=await fruitCollection.updateOne(filter,updateDoc,options)
-        //     res.send(result)
-        // })
+            const result=await fruitCollection.updateOne(filter,updateDoc,options)
+            res.send(result)
+        })
 
         //delete item
 
