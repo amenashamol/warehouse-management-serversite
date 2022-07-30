@@ -62,7 +62,7 @@ async function run(){
         })
         
         //get api to read all inventory 
-        app.get('/allinventory',async(req,res)=>{
+        app.get('/allinventory',verifyJWT,async(req,res)=>{
             const query={}
             const  cursor= fruitCollection.find(query)
             const inventories= await cursor.toArray()
@@ -105,7 +105,7 @@ async function run(){
 
         //delete item
 
-      app.delete('/allinventory/:id',async(req,res)=>{
+      app.delete('/allinventory/:id',verifyJWT,async(req,res)=>{
         const id=req.params.id 
         const filter ={_id:ObjectId(id)}
         const result=await fruitCollection.deleteOne(filter)
@@ -119,7 +119,7 @@ async function run(){
       // get my item
      
 
-    app.get('/myItem',async(req,res)=>{
+    app.get('/myItem',verifyJWT,async(req,res)=>{
       const email=req.query.email 
       const query={email:email}
       const result=await fruitCollection.find(query).toArray()
